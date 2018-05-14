@@ -48,15 +48,15 @@ namespace Tests_TDD_KATAS
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
-        
-        [TestCase("//;\n1;2;-10", -10)]
-        [TestCase("1,-1", -1)]
+        [TestCase("//;\n1;2;-10;-9", new int[] { -10, -9 })]
+        [TestCase("//~\n1~2~-10", new int[] { -10 })]
+        [TestCase("1,-1", new int[] { -1 })]
         [Test]
-        public void StringCalculator_ShouldRejectNegativeNumbers(string numbers, int expectedResult)
+        public void StringCalculator_ShouldRejectNegativeNumbers(string numbers, int[] expectedResult)
         {
             var exception = Assert.Throws<ArgumentException>(() => StringCalculator.Add(numbers));
 
-            Assert.That(exception.Message, Is.EqualTo($"{expectedResult} found, negatives not allowed"));
+            Assert.That(exception.Message, Is.EqualTo($"{string.Join(",", expectedResult)} found, negatives not allowed"));
         }
 
         [TestCase("1,1030", 1)]

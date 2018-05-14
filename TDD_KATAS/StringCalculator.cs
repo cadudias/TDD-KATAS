@@ -8,8 +8,6 @@ namespace TDD_KATAS
 {
     public class StringCalculator
     {
-        
-
         public static int Add(string numbers)
         {
             // split da string e soma os valores 
@@ -24,12 +22,35 @@ namespace TDD_KATAS
             if (HasSpecificDelimiter(numbers))
             {
                 delimiter = GetSpecificDelimiter(numbers);
-                numbersWithoutDelimiter = GetNumbersWithoutDelimiter(numbers);
+                numbersWithoutDelimiter = RemoveCustomDelimiterPrefix(numbers);
             }
 
-            return ContainsAny(numbers, delimiter) 
-                ? numbersWithoutDelimiter.Split(delimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Sum(n => ParseToValidInt(n))
-                : ParseToValidInt(numbers);
+            // crio lista de numeros
+            IEnumerable<int> parsedNumbers = ParseStringNumbers(numbersWithoutDelimiter, delimiter);
+
+            //checo se nessa lista tem numeros negativos
+            CheckForNegatives(parsedNumbers);
+
+            return parsedNumbers.Sum(n => !IsGreaterThan1000(n) ? n : 0);
+        }
+
+        private static IEnumerable<int> ParseStringNumbers(string stringNumbers, string delimiter)
+        {
+            IEnumerable<int> numbers = stringNumbers.Split(delimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Select(n => ParseToValidInt(n));
+
+            return numbers;
+        }
+
+        private static string RemoveCustomDelimiterPrefix(string stringNumbers)
+        {
+            string numbers = "";
+            if (stringNumbers.StartsWith("//"))
+            {
+                string[] numbersArr = stringNumbers.Split('\n');
+                numbers = numbersArr[1];
+            }
+
+            return numbers;
         }
 
         private static bool ContainsAny(string numbers, string delimiters)
@@ -39,11 +60,7 @@ namespace TDD_KATAS
 
         private static int ParseToValidInt(string n)
         {
-            int number = Convert.ToInt32(n);
-
-            CheckForNegative(number);
-
-            return !IsGreaterThan1000(number) ? number : 0;
+            return Convert.ToInt32(n);
         }
 
         private static bool IsGreaterThan1000(int number)
@@ -51,18 +68,18 @@ namespace TDD_KATAS
             return number > 1000;
         }
 
-        private static void CheckForNegative(int number)
+        private static void CheckForNegatives(IEnumerable<int> numbers)
         {
-            if (number < 0)
-            {
-                //negatives.Add(number);
-                throw new ArgumentException($"{number} found, negatives not allowed");
-            }
-        }
+            List<int> negatives = new List<int>();
 
-        private static int NotGreaterThan1000(int v)
-        {
-            throw new NotImplementedException();
+            foreach (var number in numbers)
+            {
+                if (number < 0)
+                    negatives.Add(number);
+            }
+
+            if (negatives.Count > 0)
+                throw new ArgumentException($"{string.Join(",", negatives)} found, negatives not allowed");
         }
 
         /// <summary>
