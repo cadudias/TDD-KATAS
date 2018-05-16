@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Greeting.cs" />
     <Compile Include="StringCalculator.cs" />
     <Compile Include="FizzBuzz.cs" />
     <Compile Include="Program.cs" />
