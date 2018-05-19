@@ -14,26 +14,61 @@ namespace TDD_KATAS
 
             string message = $"Hello, {name}.";
 
-            return CheckIfIsUpper(name) ? message.ToUpper() : message;
-        }
-
-        private static bool CheckIfIsUpper(string name)
-        {
-            return name.All(c => char.IsUpper(c));
+            return IsUpper(name) ? message.ToUpper() : message;
         }
 
         public static string GreetNames(string[] names)
         {
-            string[] newNames = names.Select(n => !IsLast(n, names) ? ", " + n : ", and " + n).ToArray();
+            List<string> uppercaseNames = new List<string>();
+            List<string> lowercaseNames = new List<string>();
 
-            string message = $"Hello{string.Join("", newNames)}.";
+            // check if name is upper or lower and save it in the list
+            foreach (var name in names)
+            {
+                if (IsUpper(name))
+                {
+                    uppercaseNames.Add(name);
+                }
+                else
+                {
+                    lowercaseNames.Add(name);
+                }
+            }
 
-            return message;
+            // se tem uppercase names
+            //  tem que colocar eles numa frase separada 
+            // monta uma frase com virgulas pra lowercase
+
+            // monta frase com virgulas pra uppercase
+
+            string[] newUppercaseNames = CreatePhrase(uppercaseNames);
+
+            string[] newLowerNames = CreatePhrase(lowercaseNames);
+
+            string phraseLower = $"Hello{string.Join("", newLowerNames)}.";
+
+            string phraseUpper = $" AND HELLO {string.Join("", newUppercaseNames)}.".ToUpper();
+
+            return phraseLower + (uppercaseNames.Count > 0 ? phraseUpper : "");
         }
 
-        private static bool IsLast(string n, string[] names)
+        private static string[] CreatePhrase(List<string> names)
+        {
+            return names.Select(n =>
+            names.Count == 2 ?
+                (!IsLast(n, names) ? ", " + n : " and " + n) :
+            names.Count > 2 ?
+                (!IsLast(n, names) ? ", " + n : ", and " + n) : n).ToArray();
+        }
+
+        private static bool IsLast(string n, List<string> names)
         {
             return names.Last() == n;
+        }
+
+        private static bool IsUpper(string name)
+        {
+            return name.All(c => char.IsUpper(c));
         }
     }
 }

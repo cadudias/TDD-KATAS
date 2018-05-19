@@ -33,7 +33,7 @@ namespace Tests_TDD_KATAS
         [Test]
         public void Greeting_ShouldGreetTwoPersons()
         {
-            string[] names = new string[] { "Jill", "Jane", "" };
+            string[] names = new string[] { "Jill", "Jane" };
 
             string sut = Greeting.GreetNames(names);
 
@@ -48,6 +48,16 @@ namespace Tests_TDD_KATAS
             string sut = Greeting.GreetNames(names);
 
             Assert.AreEqual(sut, "Hello, Amy, Brian, and Charlotte.");
+        }
+
+        [Test]
+        public void Greeting_ShouldGreetMultiplePersonsWithUppercaseAndLowercase()
+        {
+            string[] names = new string[] { "Amy", "BRIAN", "Charlotte" };
+
+            string sut = Greeting.GreetNames(names);
+
+            Assert.AreEqual(sut, "Hello, Amy and Charlotte. AND HELLO BRIAN.");
         }
     }
 }
