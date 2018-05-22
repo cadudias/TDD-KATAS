@@ -19,27 +19,42 @@ namespace TDD_KATAS
 
         public static string GreetNames(string[] names)
         {
+            //names.Select(n => IsCommaSeparatted(n) ? n.Split(',') : n).ToArray();
+            List<string> newArray = new List<string>();
             List<string> uppercaseNames = new List<string>();
             List<string> lowercaseNames = new List<string>();
 
             // check if name is upper or lower and save it in the list
             foreach (var name in names)
             {
-                if (IsUpper(name))
+                // tetsa se a posicao do array tem virgula
+                if (IsCommaSeparatted(name))
                 {
-                    uppercaseNames.Add(name);
+                    // se tem cria um novo array com os nomes separados
+                    string[] newNames = name.Split(',');
+
+                    foreach (var newName in newNames)
+                    {
+                        newArray.Add(newName.Trim());
+                    }
                 }
                 else
                 {
-                    lowercaseNames.Add(name);
+                    newArray.Add(name);
                 }
             }
 
-            // se tem uppercase names
-            //  tem que colocar eles numa frase separada 
-            // monta uma frase com virgulas pra lowercase
-
-            // monta frase com virgulas pra uppercase
+            foreach (var item in newArray)
+            {
+                if (IsUpper(item))
+                {
+                    uppercaseNames.Add(item);
+                }
+                else
+                {
+                    lowercaseNames.Add(item);
+                }
+            }
 
             string[] newUppercaseNames = CreatePhrase(uppercaseNames);
 
@@ -50,6 +65,12 @@ namespace TDD_KATAS
             string phraseUpper = $" AND HELLO {string.Join("", newUppercaseNames)}.".ToUpper();
 
             return phraseLower + (uppercaseNames.Count > 0 ? phraseUpper : "");
+        }
+
+        private static bool IsCommaSeparatted(string name)
+        {
+            //return names.Where(n => n.Contains(",")).Count() > 0;
+            return name.Contains(',');
         }
 
         private static string[] CreatePhrase(List<string> names)

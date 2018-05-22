@@ -50,6 +50,7 @@ namespace Tests_TDD_KATAS
             Assert.AreEqual(sut, "Hello, Amy, Brian, and Charlotte.");
         }
 
+        // Requirement 6
         [Test]
         public void Greeting_ShouldGreetMultiplePersonsWithUppercaseAndLowercase()
         {
@@ -58,6 +59,17 @@ namespace Tests_TDD_KATAS
             string sut = Greeting.GreetNames(names);
 
             Assert.AreEqual(sut, "Hello, Amy and Charlotte. AND HELLO BRIAN.");
+        }
+
+        // Requirement 7
+        [Test]
+        public void Greeting_ShouldGreetEvenIfStringContainsComma()
+        {
+            string[] names = new string[] { "Bob", "Charlie, Dianne" };
+
+            string sut = Greeting.GreetNames(names);
+
+            Assert.AreEqual(sut, "Hello, Bob, Charlie, and Dianne.");
         }
     }
 }
