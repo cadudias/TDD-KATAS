@@ -8,21 +8,18 @@ namespace TDD_KATAS
 {
     public class Greeting
     {
-        public static string Greet(string name)
+        private const string DefaultName = "my friend";
+        private const string StartHello = "Hello";
+        private const string StartShoutingGreet = "HELLO";
+
+        public List<string> namesWithoutCommas = new List<string>();
+        public List<string> uppercaseNames = new List<string>();
+        public List<string> lowercaseNames = new List<string>();
+
+        public string Greet(params string[] names)
         {
-            name = (!string.IsNullOrEmpty(name) ? name : "my friend");
-
-            string message = $"Hello, {name}.";
-
-            return IsUpper(name) ? message.ToUpper() : message;
-        }
-
-        public static string GreetNames(string[] names)
-        {
-            //names.Select(n => IsCommaSeparatted(n) ? n.Split(',') : n).ToArray();
-            List<string> newArray = new List<string>();
-            List<string> uppercaseNames = new List<string>();
-            List<string> lowercaseNames = new List<string>();
+            if (names == null || names.Length == 0 || string.IsNullOrEmpty(names[0]))
+                return ComposeSingleNormalGreet(DefaultName);
 
             // check if name is upper or lower and save it in the list
             foreach (var name in names)
@@ -30,21 +27,15 @@ namespace TDD_KATAS
                 // tetsa se a posicao do array tem virgula
                 if (IsCommaSeparatted(name))
                 {
-                    // se tem cria um novo array com os nomes separados
-                    string[] newNames = name.Split(',');
-
-                    foreach (var newName in newNames)
-                    {
-                        newArray.Add(newName.Trim());
-                    }
+                    RemoveCommas(namesWithoutCommas, name);
                 }
                 else
                 {
-                    newArray.Add(name);
+                    namesWithoutCommas.Add(name);
                 }
             }
 
-            foreach (var item in newArray)
+            foreach (var item in namesWithoutCommas)
             {
                 if (IsUpper(item))
                 {
@@ -56,15 +47,79 @@ namespace TDD_KATAS
                 }
             }
 
-            string[] newUppercaseNames = CreatePhrase(uppercaseNames);
+            string[] newUppercaseNames = AddCommasAndAndsTo(uppercaseNames);
+            string[] newLowerNames = AddCommasAndAndsTo(lowercaseNames);
 
-            string[] newLowerNames = CreatePhrase(lowercaseNames);
+            if (HasOneLowerName(namesWithoutCommas, newUppercaseNames, newLowerNames))
+            {
+                return ComposeSingleNormalGreet(newLowerNames[0]);
+            }
+            else if (HasOneUpperName(namesWithoutCommas, newUppercaseNames, newLowerNames))
+            {
+                return ComposeSingleShoutingGreet(newUppercaseNames[0]);
+            }
+            else if (HasMoreThanOneLowerCaseNames(namesWithoutCommas, newUppercaseNames, newLowerNames))
+            {
+                return ComposeMultipleNormalGreet(newLowerNames);
+            }
+            else if (HasMoreThanOneLowerCaseAndUpperCaseNames(namesWithoutCommas, newUppercaseNames, newLowerNames))
+            {
+                return ComposeMultipleNormalGreet(newLowerNames) + ComposeMultipleShoutingGreet(newUppercaseNames);
+            }
 
-            string phraseLower = $"Hello{string.Join("", newLowerNames)}.";
+            return ComposeSingleNormalGreet(newLowerNames[0]);
+        }
 
-            string phraseUpper = $" AND HELLO {string.Join("", newUppercaseNames)}.".ToUpper();
+        private static bool HasMoreThanOneLowerCaseAndUpperCaseNames(List<string> namesWithoutCommas, string[] newUppercaseNames, string[] newLowerNames)
+        {
+            return namesWithoutCommas.Count() > 1 && newLowerNames.Length > 1 && newUppercaseNames.Length >= 1;
+        }
 
-            return phraseLower + (uppercaseNames.Count > 0 ? phraseUpper : "");
+        private static bool HasMoreThanOneLowerCaseNames(List<string> namesWithoutCommas, string[] newUppercaseNames, string[] newLowerNames)
+        {
+            return namesWithoutCommas.Count() > 1 && newLowerNames.Length > 1 && newUppercaseNames.Length == 0;
+        }
+
+        private static bool HasOneUpperName(List<string> namesWithoutCommas, string[] newUppercaseNames, string[] newLowerNames)
+        {
+            return namesWithoutCommas.Count() == 1 && newLowerNames.Length == 0 && newUppercaseNames.Length == 1;
+        }
+
+        private static bool HasOneLowerName(List<string> namesWithoutCommas, string[] newUppercaseNames, string[] newLowerNames)
+        {
+            return namesWithoutCommas.Count() == 1 && newLowerNames.Length == 1 && newUppercaseNames.Length == 0;
+        }
+
+        private string ComposeSingleNormalGreet(string defaultName)
+        {
+            return $"{StartHello}, {defaultName}.";
+        }
+
+        private string ComposeMultipleNormalGreet(string[] lowercaseNames)
+        {
+            return $"{StartHello}{string.Join("", lowercaseNames)}.";
+        }
+
+        private string ComposeSingleShoutingGreet(string defaultName)
+        {
+            return $"{StartShoutingGreet}, {defaultName}.".ToUpper();
+        }
+
+        private string ComposeMultipleShoutingGreet(string[] uppercaseNames)
+        {
+            return $" AND {StartShoutingGreet} {string.Join("", uppercaseNames)}.".ToUpper();
+        }
+
+        private static List<string> RemoveCommas(List<string> namesWithoutCommas, string name)
+        {
+            string[] newNames = name.Split(',');
+
+            foreach (var newName in newNames)
+            {
+                namesWithoutCommas.Add(newName.Trim());
+            }
+
+            return namesWithoutCommas;
         }
 
         private static bool IsCommaSeparatted(string name)
@@ -73,7 +128,7 @@ namespace TDD_KATAS
             return name.Contains(',');
         }
 
-        private static string[] CreatePhrase(List<string> names)
+        private static string[] AddCommasAndAndsTo(List<string> names)
         {
             return names.Select(n =>
             names.Count == 2 ?

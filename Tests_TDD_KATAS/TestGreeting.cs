@@ -6,10 +6,18 @@ namespace Tests_TDD_KATAS
 
     class TestGreeting
     {
+        private Greeting greeting;
+
+        [SetUp]
+        public void SetUp()
+        {
+            greeting = new Greeting();
+        }
+
         [Test]
         public void Greeting_ShouldGreetWithGivenName()
         {
-            string sut = Greeting.Greet("Bob");
+            var sut = greeting.Greet("Bob");
 
             Assert.AreEqual(sut, "Hello, Bob.");
         }
@@ -17,7 +25,7 @@ namespace Tests_TDD_KATAS
         [Test]
         public void Greeting_ShouldGreetWithDefaultValueIfNameIsNull()
         {
-            string sut = Greeting.Greet(null);
+            var sut = greeting.Greet(null);
 
             Assert.AreEqual(sut, "Hello, my friend.");
         }
@@ -25,7 +33,7 @@ namespace Tests_TDD_KATAS
         [Test]
         public void Greeting_ShouldShoutIfNameIsUppercase()
         {
-            string sut = Greeting.Greet("JERRY");
+            var sut = greeting.Greet("JERRY");
 
             Assert.AreEqual(sut, "HELLO, JERRY.");
         }
@@ -33,9 +41,7 @@ namespace Tests_TDD_KATAS
         [Test]
         public void Greeting_ShouldGreetTwoPersons()
         {
-            string[] names = new string[] { "Jill", "Jane" };
-
-            string sut = Greeting.GreetNames(names);
+            var sut = greeting.Greet("Jill", "Jane");
 
             Assert.AreEqual(sut, "Hello, Jill and Jane.");
         }
@@ -43,9 +49,7 @@ namespace Tests_TDD_KATAS
         [Test]
         public void Greeting_ShouldGreetMultiplePersons()
         {
-            string[] names = new string[] { "Amy", "Brian", "Charlotte" };
-
-            string sut = Greeting.GreetNames(names);
+            var sut = greeting.Greet("Amy", "Brian", "Charlotte");
 
             Assert.AreEqual(sut, "Hello, Amy, Brian, and Charlotte.");
         }
@@ -54,9 +58,7 @@ namespace Tests_TDD_KATAS
         [Test]
         public void Greeting_ShouldGreetMultiplePersonsWithUppercaseAndLowercase()
         {
-            string[] names = new string[] { "Amy", "BRIAN", "Charlotte" };
-
-            string sut = Greeting.GreetNames(names);
+            var sut = greeting.Greet("Amy", "BRIAN", "Charlotte");
 
             Assert.AreEqual(sut, "Hello, Amy and Charlotte. AND HELLO BRIAN.");
         }
@@ -65,11 +67,20 @@ namespace Tests_TDD_KATAS
         [Test]
         public void Greeting_ShouldGreetEvenIfStringContainsComma()
         {
-            string[] names = new string[] { "Bob", "Charlie, Dianne" };
-
-            string sut = Greeting.GreetNames(names);
+            var sut = greeting.Greet("Bob", "Charlie, Dianne");
 
             Assert.AreEqual(sut, "Hello, Bob, Charlie, and Dianne.");
         }
+
+        //// Requirement 8
+        //[Test]
+        //public void Greeting_ShouldGreetEvenIfStringContainsCommaAndAllowEscape()
+        //{
+        //    string[] names = new string[] { "Bob", ""Charlie, Dianne"" };
+
+        //    string sut = Greeting.Greet(names);
+
+        //    Assert.AreEqual(sut, "Hello, Bob, Charlie, and Dianne.");
+        //}
     }
 }
