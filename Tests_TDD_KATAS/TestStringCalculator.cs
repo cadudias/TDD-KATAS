@@ -10,70 +10,43 @@ namespace Tests_TDD_KATAS
 {
     class TestStringCalculator
     {
-        [TestCase("10,20,30", 60)]
-        [TestCase("1,2,3", 6)]
-        [TestCase("1", 1)]
-        [TestCase("0", 0)]
         [Test]
-        public void StringCalculator_ShouldAddNumbers(string numbers, int expectedResult)
+        public void ShouldReturn0WhenIsEmptyString()
         {
-            var result = StringCalculator.Add(numbers);
+            var sut = StringCalculator.Add("");
 
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.AreEqual(0, sut);
         }
 
+        [TestCase(10, "2,8")]
+        [TestCase(2, "2")]
+        [TestCase(4, "2,2")]
+        [TestCase(5, "0,5")]
         [Test]
-        public void StringCalculator_ShouldReturn0WhenEmptyString()
+        public void ShouldReturnNumberIfOneNumberGiven(int expectedResult, string numbers)
         {
-            var result = StringCalculator.Add("");
+            var sut = StringCalculator.Add(numbers);
 
-            Assert.That(result, Is.EqualTo(0));
+            Assert.AreEqual(expectedResult, sut);
         }
 
+        [TestCase(6, "1\n2,3")]
         [Test]
-        public void StringCalculator_ShouldHandleNewLineBetweenNumbers()
+        public void ShouldReturnNumberSumWithNewLineInsteadOfComma(int expectedResult, string numbers)
         {
-            var result = StringCalculator.Add("1\n2,3");
+            var sut = StringCalculator.Add(numbers);
 
-            Assert.That(result, Is.EqualTo(6));
+            Assert.AreEqual(expectedResult, sut);
         }
 
-        [TestCase("//;\n1;2", 3)]
-        [TestCase("//.\n1.4", 5)]
+        [TestCase(3, "//;\n1;2")]
+        
         [Test]
-        public void StringCalculator_ShouldAddWithDifferentDelimiter(string numbers, int expectedResult)
+        public void ShouldReturnSumWithDifferentDelimiter(int expectedResult, string numbers)
         {
-            var result = StringCalculator.Add(numbers);
+            var sut = StringCalculator.Add(numbers);
 
-            Assert.That(result, Is.EqualTo(expectedResult));
-        }
-
-        [TestCase("//;\n1;2;-10;-9", new int[] { -10, -9 })]
-        [TestCase("//~\n1~2~-10", new int[] { -10 })]
-        [TestCase("1,-1", new int[] { -1 })]
-        [Test]
-        public void StringCalculator_ShouldRejectNegativeNumbers(string numbers, int[] expectedResult)
-        {
-            var exception = Assert.Throws<ArgumentException>(() => StringCalculator.Add(numbers));
-
-            Assert.That(exception.Message, Is.EqualTo($"{string.Join(",", expectedResult)} found, negatives not allowed"));
-        }
-
-        [TestCase("1,1030", 1)]
-        [TestCase("1,1000", 1001)]
-        public void StringCalculator_ShouldNotAddNumbersGreaterThan1000(string numbers, int expectedResult)
-        {
-            var result = StringCalculator.Add(numbers);
-
-            Assert.That(result, Is.EqualTo(expectedResult));
-        }
-
-        [TestCase("//[***]\n1***2***3", 6)]
-        public void StringCalculator_ShouldAddWithMultipleDelimiters(string numbers, int expectedResult)
-        {
-            var result = StringCalculator.Add(numbers);
-
-            Assert.That(result, Is.EqualTo(expectedResult));
+            Assert.AreEqual(expectedResult, sut);
         }
     }
 }
