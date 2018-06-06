@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TDD_KATAS
 {
     public class StringCalculator
     {
-        private static string delimiter = ",";
-
+        public static List<int> negatives = new List<int>();
+ 
         public static int Add(string numbers)
         {
             return string.IsNullOrEmpty(numbers) ? 0 : GetSum(numbers);           
@@ -17,24 +15,57 @@ namespace TDD_KATAS
 
         private static int GetSum(string numbers)
         {
-            string numbersWihtoutDelimiterPart = string.Empty;
+            var delimiter = GetPossibleDelimiter();
 
-            // ver se tem um delimitador customizado
-            if (numbers.Contains("//"))
+            string numbersWithoutDelimiterPart = numbers;
+
+            // check if there's any costumized delimiter
+            if (HasSpecificDelimiter(numbers))
             {
                 delimiter = GetDelimiter(numbers);
-                numbersWihtoutDelimiterPart = RemoveDelimiter(numbers, delimiter);
+                numbersWithoutDelimiterPart = RemoveDelimiter(numbers, delimiter);
             }
 
-            // se sim, extrai o delimitador
-            // passa o delimitador na lista pra dar split
+            return numbersWithoutDelimiterPart.Split(delimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Select(n => ParseToValidInt(n)).Sum();
+        }
 
-            return numbers.Split(new char[] { delimiter.ToCharArray(), '\n' }).Select(n => Convert.ToInt32(n)).Sum();
+        private static bool HasSpecificDelimiter(string numbers)
+        {
+            return numbers.Contains("//");
+        }
+
+        private static string GetPossibleDelimiter()
+        {
+            return ",\n";
+        }
+
+        private static int ParseToValidInt(string number)
+        {
+            int n = Convert.ToInt32(number);
+
+            if (n < 0)
+            {
+                NegativesNotAllowed(n);
+            }
+
+            return !IsGreaterThan1000(n) ? n : 0;
+        }
+
+        private static bool IsGreaterThan1000(int n)
+        {
+            return n > 1000;
+        }
+
+        private static void NegativesNotAllowed(int n)
+        {
+            negatives.Add(n);
+
+            throw new Exception($"Negatives found, {string.Join(",", negatives)}. Not allowed!");
         }
 
         private static string RemoveDelimiter(string numbers, string delimiter)
         {
-            throw new NotImplementedException();
+            return numbers.Substring(numbers.IndexOf("\n") + 1, numbers.Length - (numbers.IndexOf("\n") + 1));
         }
 
         private static string GetDelimiter(string numbers)
