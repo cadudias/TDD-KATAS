@@ -18,39 +18,68 @@ namespace Tests_TDD_KATAS
         {
             game = new BowlingGame();
         }
-        
+
         [Test]
-        public void ShouldReturn0PointsIfAllGutterBalls()
+        public void TestAllGutterBalls()
         {
-            game.RollFrames(0, 0, 10);
-            Assert.AreEqual(0, game.Score);
+            RollMany(20, 0);
+
+            Assert.AreEqual(0, game.Score());
         }
 
         [Test]
-        public void ShouldReturn40PointsIfAll2s()
+        public void TestAllOnes()
         {
-            game.RollFrames(2, 2, 10);
-            Assert.AreEqual(40, game.Score);
-        }
+            RollMany(20, 1);
 
-        //In bowling, you score a spare by knocking down all remaining pins during your second roll of a frame. To score it, you get 10 points, plus whatever your next roll is.
-        [Test]
-        public void FirstFrameSpareRest2sShouldScore48()
-        {
-            game.RollSpare(2, 8); // spare
-            game.RollFrames(2, 2, 9);
-            Assert.AreEqual(48, game.Score);
-            //Why 48? Well, because our first frame is a spare, and the first roll of the next frame is a 2, the score for frame 1 is 12. We then add that to the remaining 9 frames which are each 4 points (2 for each roll).
+            Assert.AreEqual(20, game.Score());
         }
 
         [Test]
-        public void TwoFrameSpareRest2sShouldScore48()
+        public void TestOneSpare()
         {
-            game.RollSpare(2, 8); // spare
-            game.RollSpare(3, 7); // spare
-            game.RollFrames(2, 2, 8);
-            Assert.AreEqual(54, game.Score);
-            //Why 48? Well, because our first frame is a spare, and the first roll of the next frame is a 2, the score for frame 1 is 12. We then add that to the remaining 9 frames which are each 4 points (2 for each roll).
+            RollSpare();
+            game.Roll(2);
+            RollMany(17, 0);
+
+            Assert.AreEqual(14, game.Score());
+        }
+
+        [Test]
+        public void TestOneStrike()
+        {
+            RollStrike();
+            game.Roll(2);
+            game.Roll(3);
+            RollMany(17, 0);
+
+            Assert.AreEqual(20, game.Score());
+        }
+
+        [Test]
+        public void TestPerfectGame()
+        {
+            RollMany(12, 10);
+            Assert.AreEqual(300, game.Score());
+        }
+
+        private void RollStrike()
+        {
+            game.Roll(10);
+        }
+
+        private void RollSpare()
+        {
+            game.Roll(5);
+            game.Roll(5);
+        }
+
+        private void RollMany(int rolls, int pins)
+        {
+            for (int i = 0; i < rolls; i++)
+            {
+                game.Roll(pins);
+            }
         }
     }
 }
